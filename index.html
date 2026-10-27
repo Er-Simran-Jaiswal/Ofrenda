@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ofrenda</title>
+<style>
+:root{--night:#1b1226;--deep:#2a1b3a;--gold:#f5a623;--rose:#e0457b;--bone:#f3ead8;--teal:#2bb3a3}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(ellipse at 50% 0,#3a2250,var(--night) 60%);color:var(--bone);font-family:Georgia,"Palatino Linotype",serif;line-height:1.6;min-height:100vh}
+.flags{height:46px;background:repeating-linear-gradient(90deg,var(--rose) 0 60px,var(--gold) 60px 120px,var(--teal) 120px 180px,var(--bone) 180px 240px);clip-path:polygon(0 0,100% 0,100% 40%,97% 100%,94% 40%,91% 100%,88% 40%,85% 100%,82% 40%,79% 100%,76% 40%,73% 100%,70% 40%,67% 100%,64% 40%,61% 100%,58% 40%,55% 100%,52% 40%,49% 100%,46% 40%,43% 100%,40% 40%,37% 100%,34% 40%,31% 100%,28% 40%,25% 100%,22% 40%,19% 100%,16% 40%,13% 100%,10% 40%,7% 100%,4% 40%,0 100%);opacity:.9}
+main{max-width:860px;margin:0 auto;padding:28px 20px 60px}
+h1{font-size:clamp(2.4rem,7vw,4.2rem);font-weight:400;margin:.2em 0 0;letter-spacing:.02em}
+.sub{color:#cdbfdc;max-width:52ch;margin:.3em 0 1.6em}
+form{display:grid;gap:14px;background:rgba(255,255,255,.05);border:1px solid #5a4470;padding:22px;border-radius:6px}
+label{display:grid;gap:4px;font-size:.95rem;color:#e8dcc4}
+input,textarea{font:inherit;background:var(--night);color:var(--bone);border:1px solid #5a4470;border-radius:4px;padding:9px 11px}
+input:focus,textarea:focus,button:focus-visible{outline:2px solid var(--gold);outline-offset:1px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:14px}@media(max-width:600px){.row{grid-template-columns:1fr}}
+button{font:inherit;cursor:pointer;background:var(--gold);color:#2a1700;border:0;border-radius:4px;padding:11px 18px;font-weight:700}
+button.alt{background:transparent;color:var(--bone);border:1px solid var(--bone)}
+#err{color:#ff9db8;margin-top:12px}
+#altar{display:none;margin-top:40px}
+.altar{position:relative;padding:30px 16px 0;background:linear-gradient(var(--deep),#150d1d);border:1px solid #5a4470;border-radius:6px 6px 0 0}
+.tier{margin:0 auto;padding:18px 18px 22px;text-align:center;border-top:6px solid var(--gold)}
+.t1{width:46%;background:#3b2552}.t2{width:76%;background:#33204a}.t3{width:100%;background:#2b1a3d}
+@media(max-width:600px){.t1{width:70%}.t2{width:88%}}
+.name{font-size:1.7rem;margin:.1em 0}.rel{color:#cdbfdc;font-style:italic;margin:0 0 .6em}
+.candles{display:flex;justify-content:center;gap:26px;margin-bottom:10px}
+.candle{width:12px;height:38px;background:var(--bone);border-radius:2px;position:relative}
+.candle::before{content:"";position:absolute;left:50%;top:-20px;width:12px;height:20px;margin-left:-6px;background:radial-gradient(circle at 50% 70%,#fff6c8,var(--gold) 55%,transparent 72%);border-radius:50% 50% 50% 50%/65% 65% 35% 35%;animation:flick 1.6s ease-in-out infinite alternate}
+.candle:nth-child(2n)::before{animation-delay:.5s}
+@keyframes flick{from{transform:scaleY(.9) rotate(-3deg)}to{transform:scaleY(1.08) rotate(3deg)}}
+@media(prefers-reduced-motion:reduce){.candle::before{animation:none}}
+.offer{display:inline-block;margin:4px;padding:5px 12px;border:1px solid var(--gold);border-radius:20px;background:rgba(245,166,35,.1);font-size:.95rem}
+.songs .offer{border-color:var(--teal);background:rgba(43,179,163,.1)}
+.words{text-align:left;white-space:pre-wrap;max-width:62ch;margin:0 auto}
+.verse{font-style:italic;color:#ffd7e4;text-align:center;white-space:pre-wrap;margin-top:1.2em}
+.cloth{height:14px;background:repeating-linear-gradient(90deg,var(--rose) 0 22px,var(--bone) 22px 44px)}
+.tools{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap}
+.foot{color:#a995bd;font-size:.85rem;margin-top:30px}
+</style></head><body>
+<div class="flags" aria-hidden="true"></div>
+<main>
+<h1>Ofrenda</h1>
+<p class="sub">Build an altar for someone you miss. A model running on this computer helps you put your memories into words. Nothing is sent to the internet.</p>
+<form id="f">
+ <div class="row">
+  <label>Their name<input name="name" required placeholder="Abuela Lucía"></label>
+  <label>Who they were to you<input name="relation" placeholder="my grandmother"></label>
+ </div>
+ <label>Favorite foods (comma separated)<input name="foods" placeholder="pan de muerto, mole, sweet tea"></label>
+ <label>Favorite songs or music<input name="songs" placeholder="Cielito Lindo, anything by Ray Charles"></label>
+ <label>A story you carry<textarea name="story" rows="4" placeholder="The summer she taught me to make tamales and burned the first batch..."></textarea></label>
+ <div><button id="go">Light the candles</button></div>
+</form>
+<div id="err" role="alert"></div>
+
+<section id="altar" aria-live="polite">
+ <div id="piece">
+  <div class="altar">
+   <div class="tier t1"><div class="candles"><i class="candle"></i><i class="candle"></i><i class="candle"></i></div><h2 class="name" id="n"></h2><p class="rel" id="r"></p></div>
+   <div class="tier t2"><div class="words" id="w"></div><div class="verse" id="v"></div></div>
+   <div class="tier t3"><div id="foods"></div><div id="songs" class="songs"></div></div>
+   <div class="cloth"></div>
+  </div>
+ </div>
+ <div class="tools"><button id="save">Save altar as a file</button><button class="alt" id="again">Write it again</button></div>
+</section>
+<p class="foot">Runs on Ollama + an open-weight model. To use a different model: <code>OFRENDA_MODEL=gemma3 python3 ofrenda.py</code></p>
+</main>
+<script>
+const $=id=>document.getElementById(id), f=$("f");
+const chips=(el,s)=>{el.innerHTML="";s.split(",").map(x=>x.trim()).filter(Boolean).forEach(x=>{const b=document.createElement("span");b.className="offer";b.textContent=x;el.appendChild(b)})};
+async function make(e){
+  if(e)e.preventDefault();
+  const d=Object.fromEntries(new FormData(f)); $("err").textContent="";
+  $("go").disabled=true; $("go").textContent="The model is thinking...";
+  try{
+    const r=await fetch("/",{method:"POST",body:JSON.stringify(d)}), j=await r.json();
+    if(j.error) throw new Error(j.error);
+    $("n").textContent=d.name; $("r").textContent=d.relation;
+    $("w").textContent=j.remembrance; $("v").textContent=j.verse;
+    chips($("foods"),d.foods); chips($("songs"),d.songs);
+    $("altar").style.display="block"; $("altar").scrollIntoView({behavior:"smooth"});
+  }catch(x){$("err").textContent=x.message}
+  $("go").disabled=false; $("go").textContent="Light the candles";
+}
+f.addEventListener("submit",make); $("again").onclick=()=>make();
+$("save").onclick=()=>{
+  const css=document.querySelector("style").outerHTML;
+  const html=`<!DOCTYPE html><html><head><meta charset="utf-8"><title>Ofrenda: ${$("n").textContent}</title>${css}</head><body><div class="flags"></div><main>${$("piece").outerHTML}</main></body></html>`;
+  const a=document.createElement("a"); a.href=URL.createObjectURL(new Blob([html],{type:"text/html"}));
+  a.download="ofrenda-"+$("n").textContent.toLowerCase().replace(/\W+/g,"-")+".html"; a.click();
+};
+</script></body></html>
